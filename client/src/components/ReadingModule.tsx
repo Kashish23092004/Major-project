@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, AlertCircle, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import Timer from './Timer';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 interface ReadingModuleProps {
   testId?: string;
@@ -23,8 +24,8 @@ const ReadingModule: React.FC<ReadingModuleProps> = ({ testId, onComplete, onCan
       try {
         setLoading(true);
         const url = testId 
-          ? `http://localhost:5000/api/reading/${testId}` 
-          : 'http://localhost:5000/api/reading';
+          ? `${API_BASE_URL}/api/reading/${testId}` 
+          : `${API_BASE_URL}/api/reading`;
           
         const res = await axios.get(url);
         const testData = Array.isArray(res.data) ? res.data[0] : res.data;

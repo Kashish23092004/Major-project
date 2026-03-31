@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Award, TrendingUp, BookOpen, Target, Save, CheckCircle } from 'lucide-react';
 import { TestResults } from '../App';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 interface ResultsScreenProps {
   results: TestResults;
@@ -50,7 +51,7 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onReset }) => {
         if (results.writing && !results.reading) { activeModule = 'writing'; activeTestId = 'writing_1'; }
         if (results.speaking && !results.reading) { activeModule = 'speaking'; activeTestId = 'speaking_1'; }
 
-        await axios.post('http://localhost:5000/api/analytics/save', {
+        await axios.post(`${API_BASE_URL}/api/analytics/save`, {
           score: overallBand,
           module: activeModule,
           testId: activeTestId

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Headphones, AlertCircle, Play, Pause, ChevronRight, ArrowLeft, Loader } from 'lucide-react';
 import axios from 'axios';
 import Timer from './Timer';
+import { API_BASE_URL } from '../config';
 
 interface ListeningModuleProps {
   testId?: string;
@@ -27,7 +28,7 @@ const ListeningModule: React.FC<ListeningModuleProps> = ({ testId, onComplete, o
     const fetchTest = async () => {
       try {
         setLoading(true);
-        const url = testId ? `http://localhost:5000/api/listening/${testId}` : 'http://localhost:5000/api/listening';
+        const url = testId ? `${API_BASE_URL}/api/listening/${testId}` : `${API_BASE_URL}/api/listening`;
         const res = await axios.get(url);
         const testData = Array.isArray(res.data) ? res.data[0] : res.data;
         
@@ -120,7 +121,7 @@ const ListeningModule: React.FC<ListeningModuleProps> = ({ testId, onComplete, o
   
   // FIX: Force React to fetch the audio from the backend server running on port 5000
   const rawAudioUrl = section?.audioUrl || test.audioUrl;
-  const audioUrl = rawAudioUrl.startsWith('http') ? rawAudioUrl : `http://localhost:5000${rawAudioUrl}`;
+  const audioUrl = rawAudioUrl.startsWith('http') ? rawAudioUrl : `${API_BASE_URL}${rawAudioUrl}`;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto p-6">

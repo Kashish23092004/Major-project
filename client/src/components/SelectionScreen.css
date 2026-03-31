@@ -1,7 +1,10 @@
-/* Base Container */
+/* ========================================= */
+/* 🚀 SELECTION SCREEN: CYBERNETIC THEME 🚀  */
+/* ========================================= */
+
 .selection-container {
   min-height: 100vh;
-  background-color: #020617;
+  background-color: #030305; /* Deep rich black */
   color: #f8fafc;
   display: flex;
   flex-direction: column;
@@ -11,174 +14,248 @@
   overflow: hidden;
   font-family: 'Inter', system-ui, sans-serif;
   padding: 2rem;
+  padding-top: 100px; /* Space for the top nav */
 }
 
-/* Ambient Background Glow */
+/* --- BACKGROUND GRID EFFECT (Synced with Landing) --- */
+.cyber-grid {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    linear-gradient(to right, rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 1;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+}
+
 .ambient-glow {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 80vw;
-  height: 80vh;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(2, 6, 23, 0) 70%);
+  width: 100vw; height: 100vh;
+  background: radial-gradient(circle at 50% 50%, rgba(79, 70, 229, 0.08) 0%, rgba(3, 3, 5, 0) 70%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Back Button */
-.back-btn {
+/* --- TOP NAVIGATION BAR (Futuristic Micro-UI) --- */
+.top-nav-bar {
   position: absolute;
-  top: 40px;
-  left: 40px;
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
-  padding: 12px 24px;
-  border-radius: 50px;
+  top: 0; left: 0; width: 100%;
+  padding: 25px 40px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  z-index: 20;
+  box-sizing: border-box;
+  background: linear-gradient(to bottom, #030305 0%, transparent 100%);
+}
+
+.nav-actions { display: flex; gap: 12px; }
+
+.nav-btn {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  padding: 8px 16px;
+  border-radius: 6px; /* Blockier tech look */
+  display: flex; align-items: center; gap: 8px;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700; font-size: 0.8rem;
+  font-family: 'Courier New', Courier, monospace; /* Monospace for button text */
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-  z-index: 20;
+  text-transform: uppercase; letter-spacing: 1.5px;
 }
 
-.back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #f8fafc;
-  transform: translateX(-5px);
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.back-icon {
-  width: 20px;
-  height: 20px;
-}
+.nav-danger { border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+.nav-danger:hover { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ffecec; }
+.nav-logout:hover { border-color: #00f2fe; color: #ffecec; box-shadow: 0 0 15px rgba(0,242,254,0.15); }
 
-/* Header Section */
-.selection-header {
-  text-align: center;
+/* --- HEADER SECTION --- */
+.selection-content {
+  position: relative;
   z-index: 10;
-  margin-bottom: 4rem;
-}
-
-.selection-badge {
-  margin: 0 auto 1.5rem auto;
-}
-
-.selection-title {
-  font-size: 4.5rem;
-  font-weight: 900;
-  margin: 0 0 1rem 0;
-}
-
-.selection-subtitle {
-  font-size: 1.3rem;
-  color: #94a3b8;
-}
-
-/* Cards Grid */
-.selection-grid {
-  display: flex;
-  gap: 3rem;
-  z-index: 10;
-  max-width: 1100px;
   width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+.selection-header { text-align: center; margin-bottom: 3rem; }
+
+.system-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px;
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 4px;
+  color: #00f2fe; font-size: 0.8rem; letter-spacing: 2px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.selection-title { font-size: 4rem; font-weight: 900; margin: 1rem 0; letter-spacing: -1px; line-height: 1; }
+.highlight-text {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #ec4899 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.animated-gradient { animation: shine 4s linear infinite; }
+@keyframes shine { to { background-position: 200% center; } }
+
+.selection-subtitle { font-size: 1.1rem; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px; }
+
+/* --- CARDS GRID --- */
+.selection-grid { display: flex; gap: 2.5rem; width: 100%; }
 
 .path-card {
   flex: 1;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 40px;
-  padding: 3.5rem;
+  background: rgba(10, 15, 30, 0.6);
+  border-radius: 20px;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(25px);
+  overflow: hidden; 
+  backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.prep-card:hover {
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 0 25px 50px -12px rgba(6, 182, 212, 0.25);
+.premium-border {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.01), 0 15px 30px rgba(0,0,0,0.5);
 }
 
-.practice-card:hover {
-  border-color: rgba(236, 72, 153, 0.5);
-  box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.25);
+.premium-border:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
 }
 
-/* Internal Glowing Orbs */
+/* Background Glo behind card (Synced with Landing) */
 .card-glow {
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 200px;
-  height: 200px;
+  position: absolute; top: -50px; right: -50px;
+  width: 200px; height: 200px; border-radius: 50%; filter: blur(70px); opacity: 0.1;
+  transition: opacity 0.5s ease; pointer-events: none; z-index: 0;
+}
+.prep-glow { background: #00f2fe; }
+.practice-glow { background: #ec4899; }
+.path-card:hover .card-glow { opacity: 0.25; }
+
+/* --- NEW: THE "CYBER NET" ANIMATED HEADER STYLES --- */
+.cyber-header {
+  position: relative;
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  display: flex; justify-content: center; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Background Gradients for the header areas */
+.prep-header-bg { background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(10, 15, 30, 1) 100%); }
+.practice-header-bg { background: linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(10, 15, 30, 1) 100%); }
+
+.matrix-layer {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0.2;
+}
+
+/* Matrix 1: Glowing Dot Grid */
+.matrix-dots {
+  background-image: radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px);
+  background-size: 15px 15px;
+  animation: matrixMove 60s linear infinite;
+}
+
+/* Matrix 2: Subtle Horizontal Lines */
+.matrix-lines {
+  background: repeating-linear-gradient(to bottom, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 11px);
+}
+
+@keyframes matrixMove { from { background-position: 0 0; } to { background-position: 500px 500px; } }
+
+/* Floating Center Cyber Core */
+.cyber-core {
+  position: relative;
+  width: 80px; height: 80px;
+  display: flex; justify-content: center; align-items: center;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.3;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  z-index: 2;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.path-card:hover .cyber-core { transform: scale(1.1); }
+.prep-core { border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 0 30px rgba(6, 182, 212, 0.1); }
+.practice-core { border-color: rgba(236, 72, 153, 0.3); box-shadow: 0 0 30px rgba(236, 72, 153, 0.1); }
+
+/* The Icon inside the core */
+.core-icon { width: 35px; height: 35px; position: relative; z-index: 3; }
+.prep-icon { color: #00f2fe; filter: drop-shadow(0 0 10px #00f2fe); }
+.practice-icon { color: #ec4899; filter: drop-shadow(0 0 10px #ec4899); }
+
+/* The Expanding Pulse Sphere behind the core */
+.core-pulse {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 50%; opacity: 0.15; z-index: 1;
   transition: opacity 0.4s ease;
 }
 
-.prep-glow { background: #06b6d4; }
-.practice-glow { background: #ec4899; }
+.prep-pulse { background: #00f2fe; box-shadow: 0 0 30px #00f2fe; }
+.practice-pulse { background: #ec4899; box-shadow: 0 0 30px #ec4899; }
 
-.path-card:hover .card-glow { opacity: 0.8; }
-
-/* Icons */
-.path-icon {
-  width: 70px;
-  height: 70px;
-  margin-bottom: 2.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 15px;
-  border-radius: 20px;
+/* The Pulse Animation itself (CSS pseudo elements) */
+.core-pulse::after {
+    content: ''; position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: coreExpand 2s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
 }
+.prep-pulse::after { border-color: rgba(6, 182, 212, 0.4); }
+.practice-pulse::after { border-color: rgba(236, 72, 153, 0.4); }
 
-.prep-icon { color: #06b6d4; }
-.practice-icon { color: #ec4899; }
+@keyframes coreExpand { 0% { scale: 1; opacity: 1; } 100% { scale: 1.5; opacity: 0; } }
 
-/* Typography inside Cards */
-.path-card h2 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin: 0 0 1.5rem 0;
-  color: #f8fafc;
-}
+.path-card:hover .core-pulse { opacity: 0.3; }
 
-.path-card p {
-  color: #94a3b8;
-  font-size: 1.2rem;
-  line-height: 1.7;
-  flex-grow: 1;
-  margin-bottom: 3rem;
-}
-
-/* Call to Action Text inside Card */
-.path-action {
-  font-weight: 800;
-  font-size: 1.3rem;
+/* --- TEXT CONTENT AREA --- */
+.card-text-content {
+  padding: 2.5rem;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative; z-index: 2;
 }
 
-.prep-card .path-action { color: #06b6d4; }
-.practice-card .path-action { color: #ec4899; }
+.card-text-content h2 { font-size: 2rem; font-weight: 900; margin: 0 0 1rem 0; color: #ffffff; letter-spacing: -0.5px; }
+.card-text-content p { color: #94a3b8; font-size: 1.05rem; line-height: 1.7; flex-grow: 1; margin-bottom: 2.5rem; }
 
-/* Responsive Adjustments */
+/* Call to Action */
+.path-action {
+  font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px;
+  display: inline-block;
+  cursor: pointer;
+  width: fit-content;
+}
+.action-cyan { color: #00f2fe; text-shadow: 0 0 10px rgba(0,242,254,0.3); }
+.action-pink { color: #ec4899; text-shadow: 0 0 10px rgba(236,72,153,0.3); }
+
+/* Responsiveness */
 @media (max-width: 900px) {
-  .selection-grid { flex-direction: column; }
-  .selection-title { font-size: 3.5rem; }
-  .back-btn { top: 20px; left: 20px; padding: 10px 20px; font-size: 0.9rem; }
+  .top-nav-bar { padding: 15px; flex-direction: column; gap: 10px; position: relative; margin-bottom: 2rem; background: transparent;}
+  .selection-grid { flex-direction: column; gap: 1.5rem; }
+  .selection-title { font-size: 3rem; }
+  .cyber-header { height: 150px; }
 }

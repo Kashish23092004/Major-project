@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, BookOpen, CheckCircle, ExternalLink, Calendar, Youtube, ShoppingCart, Loader, BrainCircuit, List, HelpCircle } from 'lucide-react';
 import axios from 'axios';
 import './PreparationScreen.css';
+import { API_BASE_URL } from '../config';
 
 // ==========================================
 // MASSIVE 10 BOOKS & 10 CHANNELS
@@ -102,7 +103,7 @@ const PreparationScreen: React.FC = () => {
         let token = localStorage.getItem('token');
         if (!token || token === 'undefined' || token === 'null') return;
         
-        const res = await axios.get('http://localhost:5000/api/analytics/dashboard', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.get(`${API_BASE_URL}/api/analytics/dashboard`, { headers: { Authorization: `Bearer ${token}` } });
         if (res.data.progress?.customPlan?.length > 0) {
           setCustomPlan(res.data.progress.customPlan);
           setAppState('dashboard');
@@ -155,7 +156,7 @@ const PreparationScreen: React.FC = () => {
          return;
       }
 
-      const res = await axios.post('http://localhost:5000/api/analytics/generate-plan', 
+      const res = await axios.post(`${API_BASE_URL}/api/analytics/generate-plan`, 
         { level, weakAreas }, { headers: { Authorization: `Bearer ${token}` } }
       );
       

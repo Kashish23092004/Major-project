@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { PenTool, AlertCircle, ChevronRight, ChevronLeft, ArrowLeft, Loader } from 'lucide-react';
 import Timer from './Timer';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 interface WritingModuleProps {
   testId?: string;
@@ -24,7 +25,7 @@ const WritingModule: React.FC<WritingModuleProps> = ({ testId, onComplete, onCan
     const fetchTest = async () => {
       try {
         setLoading(true);
-        const url = testId ? `http://localhost:5000/api/writing/${testId}` : 'http://localhost:5000/api/writing';
+        const url = testId ? `${API_BASE_URL}/api/writing/${testId}` : `${API_BASE_URL}/api/writing`;
         const res = await axios.get(url);
         const testData = Array.isArray(res.data) ? res.data[0] : res.data;
         if (!testData) throw new Error('No writing test found');
@@ -52,7 +53,7 @@ const WritingModule: React.FC<WritingModuleProps> = ({ testId, onComplete, onCan
 
       // Evaluate Task 1
       if (answers.task1.trim().length > 10) {
-        const res1 = await axios.post('http://localhost:5000/api/writing/evaluate', {
+        const res1 = await axios.post('${API_BASE_URL}/api/writing/evaluate', {
           text: answers.task1,
           taskType: 'task1'
         });
@@ -61,7 +62,7 @@ const WritingModule: React.FC<WritingModuleProps> = ({ testId, onComplete, onCan
 
       // Evaluate Task 2
       if (answers.task2.trim().length > 10) {
-        const res2 = await axios.post('http://localhost:5000/api/writing/evaluate', {
+        const res2 = await axios.post('${API_BASE_URL}/api/writing/evaluate', {
           text: answers.task2,
           taskType: 'task2'
         });

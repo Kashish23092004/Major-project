@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, AlertCircle, Square, ChevronRight, UserCircle, ShieldAlert, Loader } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -35,7 +36,7 @@ const SpeakingModule: React.FC<SpeakingModuleProps> = ({ testId, onComplete }) =
     const fetchTest = async () => {
       try {
         setLoading(true);
-        const url = testId ? `http://localhost:5000/api/speaking/${testId}` : 'http://localhost:5000/api/speaking';
+        const url = testId ? `${API_BASE_URL}/api/speaking/${testId}` : `${API_BASE_URL}/api/speaking`;
         const res = await axios.get(url);
         const testData = Array.isArray(res.data) ? res.data[0] : res.data;
         if (!testData) throw new Error('No speaking test found');
@@ -118,7 +119,7 @@ const SpeakingModule: React.FC<SpeakingModuleProps> = ({ testId, onComplete }) =
     setIsEvaluating(true);
     try {
       const transcriptStr = allResponses.join(' \n ');
-      const res = await axios.post('http://localhost:5000/api/speaking/evaluate', {
+      const res = await axios.post(`${API_BASE_URL}/api/speaking/evaluate`, {
         transcript: transcriptStr,
         partNumber: 3
       });

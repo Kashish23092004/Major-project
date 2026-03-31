@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Save } from 'lucide-react';
-
+import { API_BASE_URL } from '../config';
 const SpeakingTestEditor = () => {
     const { user } = useAuth();
     const [testData, setTestData] = useState<any>({
@@ -38,7 +38,7 @@ const SpeakingTestEditor = () => {
     const fetchTest = async () => {
         try {
             setLoading(true);
-            const baseUrl = import.meta.env?.VITE_API_URL || 'http://localhost:5000';
+            const baseUrl = import.meta.env?.VITE_API_URL || '${API_BASE_URL}';
             const res = await fetch(`${baseUrl}/api/speaking`);
             if (res.ok) {
                 const data = await res.json();
@@ -56,7 +56,7 @@ const SpeakingTestEditor = () => {
     const handleSave = async () => {
         try {
             setSaving(true);
-            const baseUrl = import.meta.env?.VITE_API_URL || 'http://localhost:5000';
+            const baseUrl = import.meta.env?.VITE_API_URL || '${API_BASE_URL}';
             const res = await fetch(`${baseUrl}/api/speaking`, {
                 method: 'POST',
                 headers: {

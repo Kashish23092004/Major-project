@@ -4,6 +4,7 @@ import { BookOpen, Headphones, PenTool, Mic, PlayCircle, RotateCcw, BarChart2, X
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import './WelcomeScreen.css';
+import { API_BASE_URL } from '../config';
 
 interface WelcomeScreenProps {
   onStart: (module?: 'listening' | 'reading' | 'writing' | 'speaking', testId?: string) => void;
@@ -24,7 +25,7 @@ const PracticeHub: React.FC<WelcomeScreenProps> = ({ onStart }) => {
 
       // 1. Fetch User History Safely (Won't crash if Analytics doesn't exist)
       try {
-        const historyRes = await axios.get('http://localhost:5000/api/analytics/dashboard', { headers });
+        const historyRes = await axios.get('${API_BASE_URL}/api/analytics/dashboard', { headers });
         setHistory(historyRes.data.progress?.attemptsHistory || []);
       } catch (error) {
         console.log('Analytics history skipped or backend missing analytics route.');
@@ -33,7 +34,7 @@ const PracticeHub: React.FC<WelcomeScreenProps> = ({ onStart }) => {
       // 2. Fetch Tests Safely
       try {
         if (activeTab !== 'full') {
-          const testRes = await axios.get(`http://localhost:5000/api/${activeTab}`);
+          const testRes = await axios.get(`${API_BASE_URL}/api/${activeTab}`);
           setTests(testRes.data);
         } else {
           // Generate 10 Full Tests for the UI
