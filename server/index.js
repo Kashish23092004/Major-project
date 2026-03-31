@@ -19,6 +19,9 @@ app.get('/health', (req, res) => {
 });
 
 // Import Routes
+app.get('/', (req, res) => {
+    res.send('IELTS Prep API is Live and Connected to MongoDB!');
+});
 const authRoutes = require('./routes/auth');
 const analyticsRoutes = require('./routes/analytics');
 const listeningRoutes = require('./routes/listening');
