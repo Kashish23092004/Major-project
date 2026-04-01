@@ -22,26 +22,27 @@ const generateToken = (id) => {
 router.post('/register', async (req, res) => {
     try {
         let { name, email, mobileNumber, password } = req.body;
-        email = email.trim().toLowerCase(); // PREVENTS CASE-SENSITIVITY BUGS
+        email = email.trim().toLowerCase();
 
         const userExists = await User.findOne({ $or: [{ email }, { mobileNumber }] });
         if (userExists) {
-            if (userExists.email === email) return res.status(400).json({ message: 'Email already registered.' });
-            if (userExists.mobileNumber === mobileNumber) return res.status(400).json({ message: 'Mobile number already in use.' });
+            return res.status(400).json({ message: 'User already exists.' });
         }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpiry = new Date(Date.now() + 10 * 60000);
 
         const user = await User.create({
-            name, email, mobileNumber, password: hashedPassword,
-            isVerified: false, otp, otpExpiry
+            name, 
+            email, 
+            mobileNumber, 
+            password, // Plain text here
+            isVerified: false, 
+            otp, 
+            otpExpiry
         });
 
-        console.log(`\n🚨 OTP FOR ${email} IS: ${otp} 🚨\n`);
+        console.log(`🚨 OTP: ${otp}`);
 
         try {
             await transporter.sendMail({
