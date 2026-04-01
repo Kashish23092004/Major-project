@@ -9,6 +9,7 @@ const router = express.Router();
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS    
@@ -36,7 +37,7 @@ router.post('/register', async (req, res) => {
             name, 
             email, 
             mobileNumber, 
-            password, // Plain text here
+            password, 
             isVerified: false, 
             otp, 
             otpExpiry
