@@ -119,9 +119,11 @@ const ListeningModule: React.FC<ListeningModuleProps> = ({ testId, onComplete, o
   // --- ACTIVE TEST VIEW ---
   const section = test.sections[0];
   
-  // FIX: Force React to fetch the audio from the backend server running on port 5000
-  const rawAudioUrl = section?.audioUrl || test.audioUrl;
-  const audioUrl = rawAudioUrl.startsWith('http') ? rawAudioUrl : `${API_BASE_URL}${rawAudioUrl}`;
+const rawAudioUrl = section?.audioUrl || test?.audioUrl || "";
+
+const audioUrl = (typeof rawAudioUrl === 'string' && rawAudioUrl.startsWith('http')) 
+    ? rawAudioUrl 
+    : `${API_BASE_URL}${rawAudioUrl}`;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto p-6">

@@ -8,12 +8,16 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    secure: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS    
-    }
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Use SSL
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS 
+  },
+  tls: {
+    rejectUnauthorized: false 
+  }
 });
 
 const generateToken = (id) => {
