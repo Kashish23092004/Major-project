@@ -45,7 +45,7 @@ const AuthScreen: React.FC = () => {
 
     try {
       if (mode === 'login') {
-        const res = await fetch(`${API_BASE_URL}///api/auth/login`, { 
+        const res = await fetch(`${API_BASE_URL}/api/auth/login`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ email: cleanEmail, password }) 
@@ -82,7 +82,7 @@ const AuthScreen: React.FC = () => {
         navigate('/selection');
         
       } else if (mode === 'forgot') {
-        const res = await fetch(`${API_BASE_URL}///api/auth/forgot-password`, { 
+        const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ email: cleanEmail }) 

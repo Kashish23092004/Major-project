@@ -9,11 +9,9 @@ const app = express();
 // Middleware
 app.use(cors(
   ({
-  origin: [
-    'https://ielts-prep-final-dcpkckisq-kashish23092004s-projects.vercel.app/', 
-    'http://localhost:5173'
-  ],
-  credentials: true
+    origin: true, // This allows any origin (Vercel, Localhost, etc.)
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 })
 ));
 app.use(express.json());
