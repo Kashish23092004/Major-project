@@ -7,7 +7,15 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors(
+  ({
+  origin: [
+    'https://major-project-z191.vercel.app', 
+    'http://localhost:5173'
+  ],
+  credentials: true
+})
+));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
