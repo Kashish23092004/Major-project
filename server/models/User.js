@@ -21,10 +21,9 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['student', 'admin'],
-    default: 'student'
-  },
-  // --- THE MISSING FIELDS THAT BROKE OTP VERIFICATION ---
+    enum: ['user', 'admin', 'instructor'],
+    default: 'user'
+},
   isVerified: {
     type: Boolean,
     default: false
