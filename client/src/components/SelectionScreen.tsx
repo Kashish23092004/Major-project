@@ -29,7 +29,7 @@ const SelectionScreen: React.FC = () => {
   const handleDeleteAccount = async () => {
     if (window.confirm('CRITICAL SYSTEM WARNING: Are you SURE you want to permanently terminate your data and profile? This action cannot be reversed.')) {
       try {
-        await fetch('${API_BASE_URL}/api/auth/delete', { 
+        await fetch(`${API_BASE_URL}/api/auth/delete`, { 
             method: 'DELETE', 
             headers: { Authorization: `Bearer ${user?.token}` } 
         });

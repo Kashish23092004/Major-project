@@ -53,7 +53,7 @@ const WritingModule: React.FC<WritingModuleProps> = ({ testId, onComplete, onCan
 
       // Evaluate Task 1
       if (answers.task1.trim().length > 10) {
-        const res1 = await axios.post('${API_BASE_URL}/api/writing/evaluate', {
+        const res1 = await axios.post(`${API_BASE_URL}/api/writing/evaluate`, {
           text: answers.task1,
           taskType: 'task1'
         });
@@ -62,7 +62,7 @@ const WritingModule: React.FC<WritingModuleProps> = ({ testId, onComplete, onCan
 
       // Evaluate Task 2
       if (answers.task2.trim().length > 10) {
-        const res2 = await axios.post('${API_BASE_URL}/api/writing/evaluate', {
+        const res2 = await axios.post('http://localhost:5000/api/writing/evaluate', {
           text: answers.task2,
           taskType: 'task2'
         });

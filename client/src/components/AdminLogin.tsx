@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../config';
 interface AdminLoginProps {
     onLoginSuccess: () => void;
     onCancel: () => void;
@@ -19,7 +20,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onCancel }) => 
         setLoading(true);
 
         try {
-            const baseUrl = import.meta.env?.VITE_API_URL || '${API_BASE_URL}';
+            const baseUrl = import.meta.env?.VITE_API_URL || `${API_BASE_URL}`;
             const response = await fetch(`${baseUrl}/api/auth/login`, {
                 method: 'POST',
                 headers: {

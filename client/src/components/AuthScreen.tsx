@@ -45,7 +45,7 @@ const AuthScreen: React.FC = () => {
 
     try {
       if (mode === 'login') {
-        const res = await fetch('${API_BASE_URL}///api/auth/login', { 
+        const res = await fetch(`${API_BASE_URL}///api/auth/login`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ email: cleanEmail, password }) 
@@ -59,7 +59,7 @@ const AuthScreen: React.FC = () => {
       } else if (mode === 'register') {
         if (password !== confirmPassword) throw new Error("Passwords do not match");
         if (strength < 3) throw new Error("Please choose a stronger password");
-        const res = await fetch('${API_BASE_URL}/api/auth/register', { 
+        const res = await fetch(`${API_BASE_URL}/api/auth/register`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ name, email: cleanEmail, mobileNumber, password }) 
@@ -70,7 +70,7 @@ const AuthScreen: React.FC = () => {
         setMode('verify');
         
       } else if (mode === 'verify') {
-        const res = await fetch('${API_BASE_URL}/api/auth/verify-otp', { 
+        const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ email: cleanEmail, otp: cleanOtp }) 
@@ -82,7 +82,7 @@ const AuthScreen: React.FC = () => {
         navigate('/selection');
         
       } else if (mode === 'forgot') {
-        const res = await fetch('${API_BASE_URL}///api/auth/forgot-password', { 
+        const res = await fetch(`${API_BASE_URL}///api/auth/forgot-password`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ email: cleanEmail }) 
@@ -94,7 +94,7 @@ const AuthScreen: React.FC = () => {
         
       } else if (mode === 'reset') {
         if (password !== confirmPassword) throw new Error("Passwords do not match");
-        const res = await fetch('${API_BASE_URL}/api/auth/reset-password', { 
+        const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ email: cleanEmail, otp: cleanOtp, newPassword: password }) 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Save, Plus, Trash2 } from 'lucide-react';
-
+import { API_BASE_URL } from '../config';
 const ReadingTestEditor = () => {
     const { user } = useAuth();
     const [testData, setTestData] = useState<any>({
@@ -23,7 +23,7 @@ const ReadingTestEditor = () => {
     const fetchTest = async () => {
         try {
             setLoading(true);
-            const baseUrl = import.meta.env?.VITE_API_URL || '${API_BASE_URL}';
+            const baseUrl = import.meta.env?.VITE_API_URL || `${API_BASE_URL}`;
             const res = await fetch(`${baseUrl}/api/reading`);
             if (res.ok) {
                 const data = await res.json();
@@ -39,7 +39,7 @@ const ReadingTestEditor = () => {
     const handleSave = async () => {
         try {
             setSaving(true);
-            const baseUrl = import.meta.env?.VITE_API_URL || '${API_BASE_URL}';
+            const baseUrl = import.meta.env?.VITE_API_URL || `${API_BASE_URL}`;
             const res = await fetch(`${baseUrl}/api/reading`, {
                 method: 'POST',
                 headers: {

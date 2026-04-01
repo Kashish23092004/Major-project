@@ -25,7 +25,7 @@ const PracticeHub: React.FC<WelcomeScreenProps> = ({ onStart }) => {
 
       // 1. Fetch User History Safely (Won't crash if Analytics doesn't exist)
       try {
-        const historyRes = await axios.get('${API_BASE_URL}/api/analytics/dashboard', { headers });
+        const historyRes = await axios.get(`${API_BASE_URL}/api/analytics/dashboard`, { headers });
         setHistory(historyRes.data.progress?.attemptsHistory || []);
       } catch (error) {
         console.log('Analytics history skipped or backend missing analytics route.');
