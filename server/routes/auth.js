@@ -23,6 +23,7 @@ const transporter = nodemailer.createTransport({
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '30d' });
 };
+
 router.post('/register', async (req, res) => {
     try {
         let { name, email, mobileNumber, password } = req.body;
@@ -40,24 +41,19 @@ router.post('/register', async (req, res) => {
 
         console.log(`\n🚨 DEBUG: OTP FOR ${email} IS: ${otp} 🚨\n`);
 
-        try {
-            
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: 'Verification OTP',
-                html: `<h1>Your OTP is: ${otp}</h1>`
-            });
-            res.status(201).json({ message: 'OTP sent to email.', email: user.email });
-        } catch (mailError) {
-            console.error("Mail Error:", mailError.message);
-            res.status(201).json({ 
-                message: 'Registration successful (Mail service busy).', 
-                email: user.email,
-                otp: otp 
-            });
-        }
+        // 🚀 FIRE AND FORGET: Send email in the background without making the user wait
+        transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Verification OTP',
+            html: `<h1>Your OTP is: ${otp}</h1>`
+        }).catch(mailError => console.error("Background Mail Error:", mailError.message));
+        
+        // ⚡ INSTANT RESPONSE: Move frontend to verification screen immediately
+        res.status(201).json({ message: 'OTP sent to email.', email: user.email });
+
     } catch (error) {
+        console.error("Register Error:", error);
         res.status(500).json({ message: 'Server error' });
     }
 });
@@ -120,19 +116,19 @@ router.post('/forgot-password', async (req, res) => {
 
         console.log(`\n🚨 PASSWORD RESET OTP FOR ${email} IS: ${otp} 🚨\n`);
 
-        try {
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: 'PASSWORD RESET OTP',
-                html: `<h2>Password Reset Request</h2><p>Your OTP to reset your password is: <strong style="font-size: 24px;">${otp}</strong></p>`
-            });
-            res.json({ message: 'Password reset OTP sent to your email' });
-        } catch (err) {
-            console.error("Mail error:", err);
-            res.status(500).json({ message: 'Failed to send OTP email.' });
-        }
+        // 🚀 FIRE AND FORGET: Send email in the background
+        transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'PASSWORD RESET OTP',
+            html: `<h2>Password Reset Request</h2><p>Your OTP to reset your password is: <strong style="font-size: 24px;">${otp}</strong></p>`
+        }).catch(err => console.error("Background Mail error:", err.message));
+        
+        // ⚡ INSTANT RESPONSE
+        res.json({ message: 'Password reset OTP sent to your email' });
+
     } catch (error) {
+        console.error("Forgot Password Error:", error);
         res.status(500).json({ message: 'Server error' });
     }
 });
