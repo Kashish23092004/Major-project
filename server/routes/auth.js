@@ -28,28 +28,47 @@ router.post('/register', async (req, res) => {
     try {
         let { name, email, mobileNumber, password } = req.body;
         email = email.trim().toLowerCase();
+        
         const userExists = await User.findOne({ $or: [{ email }, { mobileNumber }] });
         if (userExists) return res.status(400).json({ message: 'User already exists.' });
+
+        // Hash the password before saving! (Added this crucial step)
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpiry = new Date(Date.now() + 10 * 60000);
 
         const user = await User.create({
-            name, email, mobileNumber, password,
-            isVerified: false, otp, otpExpiry
+            name, 
+            email, 
+            mobileNumber, 
+            password: hashedPassword, // Store the hashed password
+            isVerified: false, 
+            otp, 
+            otpExpiry
         });
 
         console.log(`\n🚨 DEBUG: OTP FOR ${email} IS: ${otp} 🚨\n`);
 
-        // 🚀 FIRE AND FORGET: Send email in the background without making the user wait
-        transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Verification OTP',
-            html: `<h1>Your OTP is: ${otp}</h1>`
-        }).catch(mailError => console.error("Background Mail Error:", mailError.message));
+        // 🛑 FIXED: MUST AWAIT ON SERVERLESS ENVIRONMENTS
+        // We wrap this in a try-catch so if the email fails, the app doesn't crash, 
+        // but we still wait for it to finish.
+        try {
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'Verification OTP',
+                html: `<h1>Your OTP is: ${otp}</h1>`
+            });
+            console.log("Email sent successfully!");
+        } catch (mailError) {
+            console.error("Mail Error:", mailError);
+            // Optional: You could delete the user here if you only want them in the DB if the email succeeds.
+            return res.status(500).json({ message: 'User created, but failed to send OTP email.' });
+        }
         
-        // ⚡ INSTANT RESPONSE: Move frontend to verification screen immediately
+        // Response ONLY happens after the email is confirmed sent or failed.
         res.status(201).json({ message: 'OTP sent to email.', email: user.email });
 
     } catch (error) {
@@ -62,17 +81,18 @@ router.post('/verify-otp', async (req, res) => {
     try {
         let { email, otp } = req.body;
         email = email.trim().toLowerCase(); 
-        const cleanOtp = String(otp).trim(); // PREVENTS INVISIBLE SPACE BUGS
+        const cleanOtp = String(otp).trim(); 
 
         const user = await User.findOne({ email });
 
         if (!user) return res.status(400).json({ message: 'User not found' });
         
-        // COMPARES CLEANED OTP
         if (user.otp !== cleanOtp) return res.status(400).json({ message: 'Invalid OTP' });
         if (user.otpExpiry < Date.now()) return res.status(400).json({ message: 'OTP has expired' });
 
-        user.isVerified = true; user.otp = undefined; user.otpExpiry = undefined;
+        user.isVerified = true; 
+        user.otp = undefined; 
+        user.otpExpiry = undefined;
         await user.save();
 
         res.json({ user: { _id: user.id, name: user.name, email: user.email, role: user.role }, token: generateToken(user._id) });
@@ -116,15 +136,20 @@ router.post('/forgot-password', async (req, res) => {
 
         console.log(`\n🚨 PASSWORD RESET OTP FOR ${email} IS: ${otp} 🚨\n`);
 
-        // 🚀 FIRE AND FORGET: Send email in the background
-        transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'PASSWORD RESET OTP',
-            html: `<h2>Password Reset Request</h2><p>Your OTP to reset your password is: <strong style="font-size: 24px;">${otp}</strong></p>`
-        }).catch(err => console.error("Background Mail error:", err.message));
+        // 🛑 FIXED: MUST AWAIT ON SERVERLESS ENVIRONMENTS
+        try {
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'PASSWORD RESET OTP',
+                html: `<h2>Password Reset Request</h2><p>Your OTP to reset your password is: <strong style="font-size: 24px;">${otp}</strong></p>`
+            });
+             console.log("Password Reset Email sent successfully!");
+        } catch (mailError) {
+             console.error("Background Mail error:", mailError);
+             return res.status(500).json({ message: 'Failed to send reset email.' });
+        }
         
-        // ⚡ INSTANT RESPONSE
         res.json({ message: 'Password reset OTP sent to your email' });
 
     } catch (error) {
