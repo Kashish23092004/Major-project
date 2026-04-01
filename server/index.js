@@ -10,7 +10,7 @@ const app = express();
 app.use(cors(
   ({
   origin: [
-    'https://major-project-z191.vercel.app', 
+    'https://ielts-prep-final-dcpkckisq-kashish23092004s-projects.vercel.app/', 
     'http://localhost:5173'
   ],
   credentials: true
