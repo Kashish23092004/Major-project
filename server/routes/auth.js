@@ -1,25 +1,12 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const User = require('../models/User'); // Ensure this path is correct
-const { protect } = require('../middleware/auth'); // Ensure this path is correct
+const User = require('../models/User');
+const { protect } = require('../middleware/auth');
+const { Resend } = require('resend');
 
 const router = express.Router();
-
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }, 
-    family: 4,
-    connectionTimeout: 5000,
-    greetingTimeout: 5000,
-    socketTimeout: 5000
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- JWT GENERATION ---
 const generateToken = (id) => {
@@ -29,7 +16,6 @@ const generateToken = (id) => {
 };
 
 // @route   POST /register
-// @desc    Register user, hash password, and send OTP
 router.post('/register', async (req, res) => {
     try {
         let { name, email, mobileNumber, password, role } = req.body;
@@ -40,7 +26,6 @@ router.post('/register', async (req, res) => {
 
         email = email.trim().toLowerCase();
 
-        // 1. Check if user already exists
         const userExists = await User.findOne({
             $or: [{ email }, { mobileNumber: mobileNumber || null }]
         });
@@ -49,12 +34,9 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ message: 'User already exists with this email or mobile number.' });
         }
 
-
-        // 3. Generate 6-digit OTP and expiry time
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpiry = new Date(Date.now() + 10 * 60000); // 10 minutes from now
+        const otpExpiry = new Date(Date.now() + 10 * 60000);
 
-        // 4. Create the unverified user in the database
         const user = await User.create({
             name: name || 'User',
             email,
@@ -69,26 +51,27 @@ router.post('/register', async (req, res) => {
         console.log(`\n🚨 DEBUG: VERIFICATION OTP FOR ${email} IS: ${otp} 🚨\n`);
 
         try {
-            transporter.sendMail({
-                from: process.env.EMAIL_USER,
+            await resend.emails.send({
+                from: 'onboarding@resend.dev',
                 to: email,
                 subject: 'Verify Your Account - OTP',
-                html: `...`
-            }).then(() => {
-                console.log("Email sent");
-            }).catch(err => {
-                console.log("Email failed, ignoring...");
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px;">
+                        <h2>Welcome!</h2>
+                        <p>Your OTP for email verification is:</p>
+                        <h1 style="color: #4CAF50; letter-spacing: 5px;">${otp}</h1>
+                        <p>This code will expire in 10 minutes.</p>
+                    </div>
+                `
             });
+            console.log("Registration email sent successfully.");
         } catch (mailError) {
             console.error("Mail Error Details:", mailError);
-            console.log("Email failed but user created successfully");
+            await User.findByIdAndDelete(user._id);
+            return res.status(500).json({ message: 'Failed to send OTP email. Please try registering again.' });
         }
 
-        res.status(201).json({
-            message: 'User registered. OTP printed in server console.',
-            email: user.email
-        });
-
+        res.status(201).json({ message: 'OTP sent to email.', email: user.email });
 
     } catch (error) {
         console.error("Register Error:", error);
@@ -97,7 +80,6 @@ router.post('/register', async (req, res) => {
 });
 
 // @route   POST /verify-otp
-// @desc    Verify the OTP and activate the account
 router.post('/verify-otp', async (req, res) => {
     try {
         let { email, otp } = req.body;
@@ -110,12 +92,9 @@ router.post('/verify-otp', async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) return res.status(400).json({ message: 'User not found.' });
-
-        // Check OTP match and expiry
         if (user.otp !== cleanOtp) return res.status(400).json({ message: 'Invalid OTP.' });
         if (user.otpExpiry < Date.now()) return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
 
-        // Activate user and clean up OTP fields
         user.isVerified = true;
         user.otp = undefined;
         user.otpExpiry = undefined;
@@ -132,7 +111,6 @@ router.post('/verify-otp', async (req, res) => {
 });
 
 // @route   POST /login
-// @desc    Authenticate user & get token
 router.post('/login', async (req, res) => {
     try {
         let { email, password } = req.body;
@@ -144,11 +122,8 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) return res.status(401).json({ message: 'Invalid email or password.' });
-
-        // Ensure user verified their email before logging in
         if (!user.isVerified) return res.status(401).json({ message: 'Please verify your email account first.' });
 
-        // Compare hashed password
         if (await bcrypt.compare(password, user.password)) {
             res.json({
                 user: { _id: user.id, name: user.name, email: user.email, role: user.role },
@@ -164,7 +139,6 @@ router.post('/login', async (req, res) => {
 });
 
 // @route   POST /forgot-password
-// @desc    Send password reset OTP
 router.post('/forgot-password', async (req, res) => {
     try {
         let { email } = req.body;
@@ -182,10 +156,9 @@ router.post('/forgot-password', async (req, res) => {
 
         console.log(`\n🚨 DEBUG: PASSWORD RESET OTP FOR ${email} IS: ${otp} 🚨\n`);
 
-        // Send Email (MUST AWAIT FOR VERCEL)
         try {
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
+            await resend.emails.send({
+                from: 'onboarding@resend.dev',
                 to: email,
                 subject: 'Password Reset Request',
                 html: `
@@ -212,7 +185,6 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 // @route   POST /reset-password
-// @desc    Verify OTP and set new password
 router.post('/reset-password', async (req, res) => {
     try {
         let { email, otp, newPassword } = req.body;
@@ -228,11 +200,7 @@ router.post('/reset-password', async (req, res) => {
         if (user.otp !== cleanOtp) return res.status(400).json({ message: 'Invalid OTP.' });
         if (user.otpExpiry < Date.now()) return res.status(400).json({ message: 'OTP has expired.' });
 
-        // Hash the new password
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
-
-        // Clean up OTP fields
+        user.password = newPassword;
         user.otp = undefined;
         user.otpExpiry = undefined;
         await user.save();
@@ -245,7 +213,6 @@ router.post('/reset-password', async (req, res) => {
 });
 
 // @route   GET /me
-// @desc    Get user data
 router.get('/me', protect, async (req, res) => {
     try {
         res.status(200).json(req.user);
