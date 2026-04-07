@@ -13,19 +13,22 @@ const writingRoutes = require('./routes/writing');
 const speakingRoutes = require('./routes/speaking');
 
 const app = express();
-
-
 const allowedOrigins = [
-  process.env.CLIENT_URL,       
-  'http://localhost:5173',       
-  'http://localhost:3000',       
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
 ].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (Postman, mobile apps, curl)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Also allow any vercel.app subdomain dynamically
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app')
+    ) {
+      return callback(null, true);
+    }
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
