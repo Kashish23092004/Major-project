@@ -49,9 +49,6 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ message: 'User already exists with this email or mobile number.' });
         }
 
-        // 2. Hash the password securely
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
 
         // 3. Generate 6-digit OTP and expiry time
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -61,8 +58,8 @@ router.post('/register', async (req, res) => {
         const user = await User.create({
             name: name || 'User',
             email,
+             password: password,
             mobileNumber,
-            password: hashedPassword,
             role: role || 'user',
             isVerified: false,
             otp,
