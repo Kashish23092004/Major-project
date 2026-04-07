@@ -15,48 +15,42 @@ const speakingRoutes = require('./routes/speaking');
 const app = express();
 
 
-// ✅ GLOBAL CORS + PREFLIGHT HANDLER (MOST IMPORTANT FIX)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+const allowedOrigins = [
+  process.env.CLIENT_URL,       
+  'http://localhost:5173',       
+  'http://localhost:3000',       
+].filter(Boolean);
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (Postman, mobile apps, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
-  next();
-});
-
-// simple cors (no overthinking)
-app.use(cors());
-
-
-// ✅ BODY PARSER
 app.use(express.json());
 
-
-// ✅ STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 
-// ✅ HEALTH CHECK
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
-    message: 'IELTS Prep Server is running'
+    message: 'IELTS Prep Server is running',
+    allowedOrigins,
   });
 });
 
-
-// ✅ ROOT
 app.get('/', (req, res) => {
   res.send('IELTS Prep API is Live and Connected to MongoDB!');
 });
 
-
-// ✅ ROUTES
 app.use('/api/auth', authRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/listening', listeningRoutes);
@@ -65,16 +59,13 @@ app.use('/api/writing', writingRoutes);
 app.use('/api/speaking', speakingRoutes);
 app.use('/api/admin', adminRoutes);
 
-
-// ✅ MONGODB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+  .catch(err => console.error(' MongoDB connection error:', err));
 
 
-// ✅ SERVER START
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 Allowed origins:`, allowedOrigins);
 });
