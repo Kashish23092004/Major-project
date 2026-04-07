@@ -61,7 +61,7 @@ const AuthScreen: React.FC = () => {
         if (strength < 3) throw new Error("Please choose a stronger password");
         const res = await fetch(`${API_BASE_URL}/api/auth/register`, { 
             method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email: cleanEmail, mobileNumber, password }) 
         });
         const data = await res.json();
