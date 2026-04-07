@@ -86,13 +86,14 @@ router.post('/register', async (req, res) => {
             console.log("Registration email sent successfully.");
         } catch (mailError) {
             console.error("Mail Error Details:", mailError);
-            // Optional: Delete the user if the email fails so they can try again immediately
-            await User.findByIdAndDelete(user._id);
-            return res.status(500).json({ message: 'Failed to send OTP email. Please try registering again.' });
+            console.log("Email failed but user created successfully");
         }
         
-        // 6. Respond to frontend
-        res.status(201).json({ message: 'OTP sent to email.', email: user.email });
+       res.status(201).json({
+    message: 'User registered. OTP printed in server console.',
+    email: user.email
+});
+
 
     } catch (error) {
         console.error("Register Error:", error);
