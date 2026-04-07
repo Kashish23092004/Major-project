@@ -58,3 +58,4 @@ UserSchema.pre('save', async function(next) {
 });
 
 module.exports = mongoose.model('User', UserSchema);
+console.log("V3 - ROLE FIX CONFIRMED");
