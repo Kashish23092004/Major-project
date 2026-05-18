@@ -311,7 +311,7 @@ const speakingTests = [
 // =========================================================================
 
 async function seed() {
-  await mongoose.connect(MONGODB_URI, { dbName: 'ielts_prep' });
+  await mongoose.connect(MONGODB_URI, { dbName: 'IELTS_PREPERATION_PLATFORM' });
   console.log('Connected to MongoDB. Wiping old collections completely...');
 
   try { await ReadingTest.collection.drop(); } catch(e){}
